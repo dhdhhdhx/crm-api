@@ -4,6 +4,7 @@ import com.crm.common.result.PageResult;
 import com.crm.common.result.Result;
 import com.crm.query.CustomerQuery;
 import com.crm.query.IdQuery;
+import com.crm.query.IdsQuery;
 import com.crm.service.CustomerService;
 import com.crm.vo.CustomerVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,10 +49,33 @@ public class CustomerController {
         customerService.saveOrUpdate(customerVO);
         return Result.ok();
     }
+
+    @PostMapping("toPublic")
+    @Operation(summary = " 转为公海客户")
+    public Result customerToPublicPool(@RequestBody @Validated IdQuery idQuery)
+    {
+        customerService.customerToPublicPool(idQuery);
+        return Result.ok();
+    }
+
     @PostMapping("/remove")
     @Operation(summary = "客户删除")
     public Result remove(@RequestBody @Validated IdQuery query){
         customerService.removeCustomer(query);
+        return Result.ok();
+    }
+    @PostMapping("/removeList")
+    @Operation(summary = "客户批量删除")
+    public Result removeList(@RequestBody @Validated IdsQuery query){
+        customerService.removeListCustomer(query);
+        return Result.ok();
+    }
+
+    @PostMapping("toPrivate")
+    @Operation(summary = "领取客户")
+    public Result publicPoolToPrivate(@RequestBody @Validated IdQuery idQuery)
+    {
+        customerService.publicPoolToPrivate(idQuery);
         return Result.ok();
     }
 }

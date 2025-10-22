@@ -11,6 +11,7 @@ import com.crm.entity.SysManager;
 import com.crm.mapper.CustomerMapper;
 import com.crm.query.CustomerQuery;
 import com.crm.query.IdQuery;
+import com.crm.query.IdsQuery;
 import com.crm.security.user.SecurityUser;
 import com.crm.service.CustomerService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -19,6 +20,7 @@ import com.crm.vo.CustomerVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -31,7 +33,9 @@ import java.util.List;
  * @since 2025-10-12
  */
 @Service
+@AllArgsConstructor
 public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> implements CustomerService {
+    private final CustomerMapper customerMapper;
     @Override
     public PageResult<CustomerVO> getPage(CustomerQuery query) {
         Page<CustomerVO> page = new Page<>(query.getPage(),query.getLimit());
@@ -115,6 +119,17 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
     }
 
     @Override
+    public void customerToPublicPool(IdQuery idQuery) {
+        Customer customer = baseMapper.selectById(idQuery.getId());
+        if(customer == null){
+            throw new ServerException(" 客户不存在 ,⽆法转⼊公海 ");
+        }
+        customer.setIsPublic(1);
+        customer.setOwnerId(null);
+        baseMapper.updateById(customer);
+    }
+
+    @Override
     public void removeCustomer(IdQuery query) {
         LambdaQueryWrapper<Customer> wrapper = new LambdaQueryWrapper<Customer>().eq(Customer::getId, query.getId());
         Customer customer = baseMapper.selectOne(wrapper);
@@ -126,8 +141,26 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
     }
 
     @Override
-    public void removeListCustomer(IdQuery query) {
+    public void removeListCustomer(IdsQuery query) {
+        LambdaQueryWrapper<Customer> wrapper = new LambdaQueryWrapper<Customer>().in(Customer::getId, query.getIds());
+        int rows = customerMapper.delete(wrapper);
+        if (rows == 0){
+            throw new ServerException("客户不存在");
+        }else {
+            baseMapper.delete(wrapper);
+        }
+    }
 
+    @Override
+    public void publicPoolToPrivate(IdQuery idQuery) {
+        Customer customer = baseMapper.selectById(idQuery.getId());
+        if (customer == null) {
+            throw new ServerException(" 客户不存在 ,⽆法转⼊公海");
+        }
+        customer.setIsPublic(0);
+        Integer ownerId = SecurityUser.getManagerId();
+        customer.setOwnerId(ownerId);
+        baseMapper.updateById(customer);
     }
 
 }

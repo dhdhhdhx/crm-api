@@ -5,6 +5,7 @@ import com.crm.entity.Customer;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.crm.query.CustomerQuery;
 import com.crm.query.IdQuery;
+import com.crm.query.IdsQuery;
 import com.crm.vo.CustomerVO;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,9 @@ public interface CustomerService extends IService<Customer> {
 
     void  removeCustomer(IdQuery query);
 
-    void removeListCustomer(IdQuery query);
+    void removeListCustomer(IdsQuery query);
+
+    void customerToPublicPool(IdQuery idQuery);
+
+    void publicPoolToPrivate(IdQuery idQuery);
 }
