@@ -1,0 +1,3 @@
+# 忽略本地敏感配置
+src/main/resources/application-dev.properties
+target/

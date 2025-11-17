@@ -4,21 +4,26 @@ import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.ContentRowHeight;
+import com.crm.converter.*;
 import com.crm.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+/**
+ * @Author: zmy
+ * @Date: 2025/10/19
+ * @Version: 1.0
+ */
 @Data
 @ExcelIgnoreUnannotated
 @ContentRowHeight(105)
 @ColumnWidth(24)
 public class CustomerVO {
-
     @Schema(description = "主键")
     private Integer id;
 
@@ -38,12 +43,12 @@ public class CustomerVO {
 
     @Schema(description = "客户级别")
     @NotNull(message = "客户级别不能为空")
-    @ExcelProperty(value = "客户级别", converter = com.crm.converter.CustomerLevelConverter.class)
+    @ExcelProperty(value = "客户级别", converter = CustomerLevelConverter.class)
     private Integer level;
 
     @Schema(description = "客户来源")
     @NotNull(message = "客户来源不能为空")
-    @ExcelProperty(value = "客户来源", converter = com.crm.converter.CustomerSourceConverter.class)
+    @ExcelProperty(value = "客户来源", converter = CustomerSourceConverter.class)
     private Integer source;
 
     @Schema(description = "客户地址")
@@ -51,18 +56,18 @@ public class CustomerVO {
     private String address;
 
     @Schema(description = "跟进状态")
-    @ExcelProperty(value = "跟进状态", converter = com.crm.converter.FollowUpStatusConverter.class)
+    @ExcelProperty(value = "跟进状态", converter = FollowUpStatusConverter.class)
     private Integer followStatus;
 
     @Schema(description = "下次跟进时间")
     @JsonFormat(pattern = DateUtils.DATE_TIME_PATTERN)
     @ExcelProperty("下次跟进时间")
-    private LocalDateTime nextFollowTime;   // 原名 nextFollowStatus，语义更正
+    private LocalDateTime nextFollowStatus;
 
     @Schema(description = "备注")
     private String remark;
 
-    @Schema(description = "创建人 id")
+    @Schema(description = "创建人id")
     private Integer createrId;
 
     @Schema(description = "创建人")
@@ -71,18 +76,18 @@ public class CustomerVO {
     @Schema(description = "是否转入公海 0-未转入公海，1-已转入公海")
     private Integer isPublic;
 
-    @Schema(description = "客户所属的员工 id")
+    @Schema(description = "客户所属的员工id")
     private Integer ownerId;
 
     @Schema(description = "客户所属的员工")
     private String ownerName;
 
     @Schema(description = "是否为关键决策人 0-是，1-否")
-    @ExcelProperty(value = "是否为关键决策人", converter = com.crm.converter.IsKeyDecisionMakerConverter.class)
+    @ExcelProperty(value = "是否为关键决策人", converter = IsKeyDecisionMakerConverter.class)
     private Integer isKeyDecisionMaker;
 
-    @Schema(description = "性别 0-男，1-女，2-保密")
-    @ExcelProperty(value = "性别", converter = com.crm.converter.GenderConverter.class)
+    @Schema(description = "性别 0-男，1-女 2-保密")
+    @ExcelProperty(value = "性别", converter = GenderConverter.class)
     private Integer gender;
 
     @Schema(description = "成交次数")

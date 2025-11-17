@@ -1,8 +1,10 @@
 package com.crm.controller;
 
+import com.crm.common.aop.Log;
 import com.crm.common.result.PageResult;
 import com.crm.common.result.Result;
 import com.crm.entity.Department;
+import com.crm.enums.BusinessType;
 import com.crm.query.DepartmentQuery;
 import com.crm.query.IdQuery;
 import com.crm.service.DepartmentService;
@@ -27,18 +29,17 @@ import java.util.List;
  */
 @Tag(name = "部门管理")
 @RestController
+@RequestMapping("department")
 @AllArgsConstructor
-@RequestMapping("/department")
 public class DepartmentController {
     private final DepartmentService departmentService;
 
-    @PostMapping("/page")
+    @PostMapping("page")
     @Operation(summary = "部门分页列表")
-    public Result<PageResult<Department>> getPage(@RequestBody @Validated DepartmentQuery query){
+    @Log(title = "部门列表-分页", businessType = BusinessType.SELECT)
+    public Result<PageResult<Department>> getPage(@RequestBody @Validated DepartmentQuery query) {
         return Result.ok(departmentService.getPage(query));
     }
-
-
     @PostMapping("list")
     @Operation(summary = "部门列表查询")
     public Result<List<Department>> getList() {
@@ -51,6 +52,7 @@ public class DepartmentController {
         departmentService.saveOrEditDepartment(department);
         return Result.ok();
     }
+
 
     @PostMapping("remove")
     @Operation(summary = "删除部门")

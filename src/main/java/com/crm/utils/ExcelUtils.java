@@ -16,12 +16,12 @@ import java.net.URLEncoder;
 import java.util.List;
 
 /**
-* @description: excel 写入工具类
-*
-* @author: ycshang
-*
-* @create: 2025-10-19 10:37
-**/
+ * @description: excel 写入工具类
+ *
+ * @author: ycshang
+ *
+ * @create: 2025-10-19 10:37
+ **/
 public class ExcelUtils {
     /**
      * 导出 excel
@@ -33,17 +33,17 @@ public class ExcelUtils {
      * @param clazz     输出数据的模板
      */
     public static void writeExcel(HttpServletResponse response, List<? extends Object> data, String fileName, String sheetName, Class clazz) {
-        //        表头样式
+        //表头样式
         WriteCellStyle headWriteCellStyle = new WriteCellStyle();
         WriteFont writeFont = new WriteFont();
         writeFont.setFontHeightInPoints((short) 12);
-        //        设置表头样式居中
+        //设置表头样式居中
         headWriteCellStyle.setHorizontalAlignment(HorizontalAlignment.CENTER);
         headWriteCellStyle.setWriteFont(writeFont);
         headWriteCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        //        内容样式
+        //内容样式
         WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
-        //        设置内容居中
+        //设置内容居中
         contentWriteCellStyle.setHorizontalAlignment(HorizontalAlignment.CENTER);
         contentWriteCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         contentWriteCellStyle.setWrapped(true);
@@ -65,4 +65,3 @@ public class ExcelUtils {
         return response.getOutputStream();
     }
 }
-

@@ -4,14 +4,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * @Author: calm_sunset
+ * @Author: 夏企博
  * @Date: 2025/10/12
  * @Version: 1.0
  */
-
-
 @Data
 public class IdQuery {
+
     @NotNull(message = "id不能为空")
     private Integer id;
 }

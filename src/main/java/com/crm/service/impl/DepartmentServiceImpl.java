@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * <p>
@@ -31,8 +30,22 @@ import java.util.stream.Stream;
 @Service
 @AllArgsConstructor
 public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Department> implements DepartmentService {
-
     private final SysManagerMapper sysManagerMapper;
+
+
+    @Override
+    public void removeDepartment(IdQuery query) {
+        List<SysManager> sysManagers = sysManagerMapper.selectList(new LambdaQueryWrapper<SysManager>().eq(SysManager::getDepartId, query.getId()));
+        if (!sysManagers.isEmpty()) {
+            throw new ServerException("部门下有管理员,请解绑后再删除");
+        }
+        // 删除该部门以及子部门
+        List<Department> departments = baseMapper.selectList(new LambdaQueryWrapper<Department>().like(Department::getParentIds, query.getId()).or().eq(Department::getId, query.getId()));
+        removeBatchByIds(departments);
+    }
+
+
+
     @Override
     public PageResult<Department> getPage(DepartmentQuery query) {
         // 1、构造条件查询 wrapper
@@ -99,6 +112,8 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         });
         return parentDepartments;
     }
+
+
     @Override
     public void saveOrEditDepartment(Department department) {
 //        1、查询新增/修改的部门名称是不是已经存在了，如果存在直接抛出异常
@@ -159,15 +174,5 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
             baseMapper.updateById(department);
         }
 
-    }
-    @Override
-    public void removeDepartment(IdQuery query) {
-        List<SysManager> sysManagers = sysManagerMapper.selectList(new LambdaQueryWrapper<SysManager>().eq(SysManager::getDepartId, query.getId()));
-        if (!sysManagers.isEmpty()) {
-            throw new ServerException("部门下有管理员,请解绑后再删除");
-        }
-        // 删除该部门以及子部门
-        List<Department> departments = baseMapper.selectList(new LambdaQueryWrapper<Department>().like(Department::getParentIds, query.getId()).or().eq(Department::getId, query.getId()));
-        removeBatchByIds(departments);
     }
 }
